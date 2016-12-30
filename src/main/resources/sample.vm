@@ -1,0 +1,159 @@
+<html>
+<link rel="stylesheet" type="text/css" href="reporting.css">
+<link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+
+<head>
+</head>
+
+<body>
+<div class="header">
+<div title="dummy image. replace with your company logo" class="logo"><img src="https://dummyimage.com/300x100"></div>
+<div class="title"><h1>TestNG report</h1></div>
+</div>
+
+<div class = "reportBody">
+
+#foreach($xmlTest in $xmlTestList)
+
+#set($failedTests =$failedTestMethodsMap.get($xmlTest.getName()) )
+#set($passedTests =$passedTestMethodsMap.get($xmlTest.getName()) )
+#set($skippedTests =$skippedTestMethodsMap.get($xmlTest.getName()) )
+<div class= "testngTest">
+
+<div class = "summaryHeading">
+<h2>Test Summary for $xmlTest.getName()<h2>
+
+
+<div class="CSSTableGenerator">
+<table>
+
+<tr>
+<td><a href= "#passedTests">Total tests Passed</a></td>
+ <td>$passedTests.size()</td>
+ </tr>
+ <tr>
+<td><a href= "#failedTests" >Total tests failed</a></td>
+<td>$failedTests.size()</td>
+</tr>
+<tr>
+<td>Total tests skipped</td>
+ <td>$skippedTests.size()</td>
+</tr>
+</table>
+</div> 
+</div>
+#if($failedTests.size() > 0)
+<div>
+<a name ="failedTests">
+<h2>Detailed report of Failed Tests
+</h2></a>
+
+#foreach( $failedResult in  $failedTests )
+
+#set($failedMethod = $failedResult.getMethod())
+#set($dateFormat = "d-M-yyyy H:m:s")
+#set($timeTaken = $mathTool.div($mathTool.sub($failedResult.getEndMillis(), $failedResult.getStartMillis()),1000))
+<div>
+<div class = "test" id ="failedHeader"> 
+<div>
+<span><b>Test Method:</b> $failedMethod.getTestClass().getName()#$failedMethod.getMethodName()</span>
+<span class= "time"><b>Start Time:</b> $dateTool.format($dateFormat, $failedResult.getStartMillis()) </span>
+</div>
+<div>
+<span><b>Test Decription:</b> $failedMethod.getDescription() </span>
+<span class = "time">
+<b>Time Taken:</b> $timeTaken.doubleValue() secs
+ </span>
+</div> 
+</div>
+#if(!$failedMethod.getMethodsDependedUpon() && $failedMethod.getMethodsDependedUpon().lenght > 0 )
+<div>depends on: $failedMethod.getMethodsDependedUpon().toString()</div>
+#end
+
+<div class = "test" id ="failedDescription">
+<table>
+#foreach($step in $methodLogMapping.get($failedResult))
+<tr>
+<td><p>$displayTool.br($step)</p></td>
+</tr>
+#end
+#if($failedResult.getThrowable())
+<td><p>$displayTool.br($ExceptionUtils.getStackTrace($failedResult.getThrowable()))</p></td>
+#end
+</table>
+</div>
+</div>
+#end
+#end
+</div>
+
+
+#if($passedTests.size() > 0)
+<div>
+<a name ="passedTests">
+<h2>Detailed report of Passed Tests</h2>
+</a>
+</div>
+
+#foreach( $passedResult in  $passedTests )
+
+#set($passedMethod = $passedResult.getMethod())
+#set($dateFormat = "d-M-yyyy H:m:s")
+#set($timeTaken = $mathTool.div($mathTool.sub($passedResult.getEndMillis(), $passedResult.getStartMillis()),1000))
+
+<div>
+<div class = "test" id ="passedHeader"> 
+<div>
+<span><b>Test Method:</b> $passedMethod.getTestClass().getName()#$passedMethod.getMethodName()</span>
+<span class= "time"><b>Start Time:</b> $dateTool.format($dateFormat, $passedResult.getStartMillis()) </span>
+</div>
+<div>
+<span><b>Test Decription:</b> $passedMethod.getDescription() </span>
+<span class = "time">
+<b>Time Taken:</b> $timeTaken.doubleValue() secs
+ </span>
+</div> 
+</div>
+#if(!$passedMethod.getMethodsDependedUpon() && $passedMethod.getMethodsDependedUpon().lenght > 0 )
+<div>depends on: $passedMethod.getMethodsDependedUpon().toString()</div>
+#end
+</div>
+
+<div class = "test" id ="passedHeader">
+<table>
+#foreach($step in $methodLogMapping.get($passedResult))
+<tr>
+<td><p>$displayTool.br($step)</p></td>
+</tr>
+#end
+</table>
+</div>
+#end
+#end
+
+#if($skippedTests.size() > 0)
+<div>
+Skipped Methods
+</div>
+
+#foreach( $skippedMethod in  $skippedTests )
+
+<div>
+<div> Test Name: $skippedMethod.getMethodName() </div> 
+<div>Test Decription: $skippedMethod.getDescription() </div>
+#if(!$skippedMethod.getMethodsDependedUpon() && $skippedMethod.getMethodsDependedUpon().lenght > 0 )
+<div>depends on: $skippedMethod.getMethodsDependedUpon().toString()</div>
+#end
+</div>
+
+#end
+#end
+
+</div>
+
+#end
+</div>
+      
+ </body>
+ 
+</html>

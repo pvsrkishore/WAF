@@ -1,0 +1,109 @@
+	<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+	<html>
+	
+	
+	<link rel="stylesheet" type="text/css" href="../reporting.css">
+		<head>
+			<title></title>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		</head>
+		<body>
+			<div class="container-fluid">
+
+		<div class="row" id="header">
+		<div title="dummy image. replace with your company logo" class ="col-md-4"><img src="https://dummyimage.com/300x100/" ></div>
+		<div class ="col-md-8"><h1>TestNG report</h1></div>
+		</div>
+		
+		<div class="row">
+		<div class ="col-md-2"></div>
+		<div class ="col-md-8"><table class="table table-striped table-bordered">
+		<tbody class = "text-center">
+		<tr >
+		<td class="col-md-2">URL</td>
+		 <td class="col-md-8">$request.getURI()</td>
+	 </tr>
+	<tr>
+		<td class="col-md-2 ">Http Method</td>
+		 <td class="col-md-8">$request.getMethod()</td>
+	 </tr>
+	 <tr>
+		<td class="col-md-2 ">Http Status</td>
+		 <td class="col-md-8">$response.getStatus()</td>
+	 </tr>
+	 <tr>
+	
+		</tbody>
+	    </table>
+	</div>
+		<div class ="col-md-2"></div>
+	
+	</div>
+	
+	<div class="container-fluid">
+	
+	<div class ="row">
+	<table class="table table-striped table-bordered">
+	<thead class="text-center">
+    <tr>
+      <th class="text-center col-md-6" colspan="2">Request Headers</th>
+        <th class="text-center col-md-6" colspan="2">Response Headers</th>
+    </tr>
+
+	<tbody>
+#set($start = 0)
+#set($range = [$start..$headerSize])
+#foreach($i in $range) 
+
+<tr >
+#if($requestHeaders.size()>$i)
+	#set($requestEntry=$requestHeaders.get($i))
+	<td class="col-md-2">$requestEntry.getKey()</td>
+	<td class="col-md-4">$requestEntry.getValue()</td>
+#else
+	 <td class="col-md-2"></td>
+	<td class="col-md-4"></td>
+#end
+
+#if($responseHeaders.size()>$i)
+	#set($responseEntry=$responseHeaders.get($i))
+	<td class="col-md-2">$responseEntry.getKey()</td>
+	<td class="col-md-4">$responseEntry.getValue()</td>
+#else
+	 <td class="col-md-2"></td>
+	<td class="col-md-4"></td>
+#end
+
+	 </tr>
+#end
+	<tr>
+	
+	<td  colspan="2"><div class="payload"><pre id= "requesetPayload"></pre></div></td>
+	<td  colspan="2"><div class="payload"><pre id= "responsePayload"></pre></div></td>
+	</tr>
+	
+	<script>
+var text = $utility.prettyPrintJson($response.getEntityInputStream());
+
+var obj = JSON.stringify(text,null, 2);
+
+document.getElementById("responsePayload").innerHTML = obj;
+</script>
+	<script>
+var text = $utility.prettyPrintJson($utility.prettyPrintJson($request.getEntity()));
+
+var obj = JSON.stringify(text,null, 2);
+
+document.getElementById("requesetPayload").innerHTML = obj;
+</script>
+
+	</tbody>
+	</table>
+	</div>
+
+	</div>
+
+		</div>
+	
+		</body>
+	</html>
